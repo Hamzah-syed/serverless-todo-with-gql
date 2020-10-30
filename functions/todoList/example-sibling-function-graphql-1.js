@@ -4,6 +4,7 @@
 const { ApolloServer, gql } = require("apollo-server-lambda");
 const faunadb = require("faunadb"),
   q = faunadb.query;
+require("faunadb").config();
 
 const typeDefs = gql`
   type Query {
@@ -25,7 +26,7 @@ const resolvers = {
     allTasks: async (root, args, context) => {
       try {
         const adminClient = new faunadb.Client({
-          secret: "fnAD5ZyVuQACAWrvGDGLeCAbHVQCTDBY5v2pWCsr",
+          secret: process.env.ADMIN_SECRET,
         });
         const result = await adminClient.query(
           q.Map(
@@ -50,7 +51,7 @@ const resolvers = {
     addTask: async (_, { text }) => {
       try {
         const client = new faunadb.Client({
-          secret: "fnAD5ZyVuQACAWrvGDGLeCAbHVQCTDBY5v2pWCsr",
+          secret: process.env.ADMIN_SECRET,
         });
         const result = await client.query(
           q.Create(q.Collection("tasks"), {
