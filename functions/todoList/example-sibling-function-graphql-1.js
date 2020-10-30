@@ -24,22 +24,27 @@ const resolvers = {
   Query: {
     allTasks: async (root, args, context) => {
       try {
-        const client = new faunadb.Client({
+        const adminClient = new faunadb.Client({
           secret: "fnAD5ZyVuQACAWrvGDGLeCAbHVQCTDBY5v2pWCsr",
         });
-
-        const result = await client.query(
+        const result = await adminClient.query(
           q.Map(
-            q.Paginate(q.Match(q.Index("all_Tasks"))),
+            q.Paginate(q.Match(q.Index("all_tasks"))),
             q.Lambda((x) => q.Get(x))
           )
         );
+
         console.log(result.ref.data);
+
         return [{}];
       } catch (error) {
-        return error.toString();
+        console.log(error);
       }
     },
+    // authorByName: (root, args, context) => {
+    //   console.log('hihhihi', args.name)
+    //   return authors.find(x => x.name === args.name) || 'NOTFOUND'
+    // },
   },
   Mutation: {
     addTask: async (_, { text }) => {
