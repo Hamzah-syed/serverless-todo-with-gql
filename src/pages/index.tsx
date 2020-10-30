@@ -90,13 +90,15 @@ export default function Home() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    addTask({
-      variables: {
-        text: task,
-      },
-      refetchQueries: [{ query: getTodos }],
-    });
-    setTask("");
+    if (task !== "") {
+      addTask({
+        variables: {
+          text: task,
+        },
+        refetchQueries: [{ query: getTodos }],
+      });
+      setTask("");
+    }
   };
 
   const handleDelete = (id) => {
@@ -126,6 +128,7 @@ export default function Home() {
                   onChange={(e) => setTask(e.target.value)}
                   label="Task"
                   name="task"
+                  required
                 />
               </Box>
               <Button type="submit" variant="contained" color="primary">
