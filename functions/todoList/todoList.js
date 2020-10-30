@@ -36,12 +36,12 @@ const resolvers = {
         );
         const data = result.data.map((d) => {
           return {
-            id: d.ts,
+            id: d.ref.id,
             completed: d.data.completed,
             text: d.data.text,
           };
         });
-        console.log(data);
+        // console.log(data);
         // console.log(result.data);
 
         return data;
@@ -62,13 +62,27 @@ const resolvers = {
             },
           })
         );
-        console.log(result.data.task);
+        // console.log(result.data.task);
         return result.data;
       } catch (error) {
         return error.toString();
       }
     },
-    deleteTask: async (_, { id }) => {},
+    deleteTask: async (_, { id }) => {
+      try {
+        const reqId = JSON.stringify(id);
+        const reqId2 = JSON.parse(id);
+        console.log(id);
+
+        const result = await client.query(
+          q.Delete(q.Ref(q.Collection("tasks"), id))
+        );
+        console.log(result);
+        return result.data;
+      } catch (error) {
+        return error;
+      }
+    },
   },
 };
 

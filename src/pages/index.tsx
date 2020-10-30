@@ -65,10 +65,20 @@ const addTodo = gql`
   }
 `;
 
+const deleteTodo = gql`
+  mutation deleteTask($id: ID!) {
+    deleteTask(id: $id) {
+      text
+    }
+  }
+`;
+
 export default function Home() {
   const classes = MyStyle();
   const [task, setTask] = useState<string>("");
+
   const { loading, error, data } = useQuery(getTodos);
+  const [deleteTask] = useMutation(deleteTodo);
   const [addTask] = useMutation(addTodo);
   //   if (loading) {
   //     return <h2>Loading...</h2>;
@@ -86,11 +96,25 @@ export default function Home() {
       },
       refetchQueries: [{ query: getTodos }],
     });
+    setTask("");
+  };
+
+  const handleDelete = (id) => {
+    console.log(JSON.stringify(id));
+    deleteTask({
+      variables: {
+        id: id,
+      },
+      refetchQueries: [{ query: getTodos }],
+    });
   };
 
   return (
     <Container>
       <div className={classes.mainContainer}>
+        <Box py={8}>
+          <Typography variant="h5">SERVERLESS GRAPHQL TODO APP</Typography>
+        </Box>
         <div className={classes.formContainer}>
           <Box p={4}>
             <form onSubmit={handleSubmit}>
@@ -124,7 +148,7 @@ export default function Home() {
                       <Typography>{task.text}</Typography>
                     </Grid>
                     <Grid container justify="flex-end" item xs={2}>
-                      <IconButton>
+                      <IconButton onClick={() => handleDelete(task.id)}>
                         <CloseIcon color="secondary" fontSize="small" />
                       </IconButton>
                     </Grid>
